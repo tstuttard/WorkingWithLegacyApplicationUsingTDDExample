@@ -6,7 +6,7 @@ $foo = new App\Acme\Foo();
 try {
     $dsn = 'mysql:host=mysql;dbname=test;charset=utf8;port=3306';
     $pdo = new PDO($dsn, 'dev', 'dev');
-    $cartQuery = $pdo->query('select * from cart left join cart_items on cart.id = cart_items.cart_id');
+    $cartQuery = $pdo->query('select *, cart_items.id as cart_item_id from cart left join cart_items on cart.id = cart_items.cart_id');
     $cart = $cartQuery->fetchAll();
     $cartTotal = 0;
 
@@ -44,7 +44,7 @@ try {
             <?php foreach ($cart as $cartItem):
                 $cartTotal += $cartItem['item_cost'] * $cartItem['item_quantity'];
             ?>
-            <div class="cart-item" id="cart-item-<?php $cartItem['id'] ?>"">
+            <div class="cart-item" id="cart-item-<?php echo $cartItem['cart_item_id'] ?>">
                 <div class="cart-item-list">
                     <?php echo $cartItem['item_name'] ?> x <?php echo $cartItem['item_quantity'] ?>
                 </div>
