@@ -49,12 +49,18 @@ where customer_id = :customer_id');
     <meta charset="utf-8">
     <title>Docker <?php echo $foo->getName(); ?></title>
     <style>
+        body {
+            font-size: 28px;
+        }
+
         .cart {
-            width: 200px;
+            width: 500px;
+            border: black 1px solid;
+            padding: 5px;
         }
 
         .cart-item {
-            margin-bottom: 10px;
+            /*margin-bottom: 10px;*/
         }
 
         .cart-item-list {
@@ -63,6 +69,19 @@ where customer_id = :customer_id');
 
         .cart-item-price {
             display: inline;
+            float: right;
+        }
+
+        .discount-value {
+            float: right;
+        }
+
+        .tax-value {
+            float: right;
+        }
+
+        .cart-total-value {
+            float: right;
         }
     </style>
 </head>
@@ -81,16 +100,26 @@ where customer_id = :customer_id');
                 <?php echo $cartItem['item_name'] ?> x <?php echo $cartItem['item_quantity'] ?>
             </div>
             <div class="cart-item-price">
-                <?php echo $currencySymbol ?> <?php echo number_format($cartItem['item_quantity'] * $cartItem['item_cost'] / 100, 2) ?>
+                <?php echo $currencySymbol ?><?php echo number_format($cartItem['item_quantity'] * $cartItem['item_cost'] / 100, 2) ?>
             </div>
         </div>
     <?php endforeach; ?>
-    <div class="tax-total">Tax: <?php echo $currencySymbol ?> <?php
+    <?php if ($cartTotal > 10000):
+        $cartDiscount = $cartTotal * 0.2;
+        $cartTotal -= $cartDiscount;
+    ?>
+    <div class="discount">
+        <span class="discount-text">Discount: 20% off £100 spend</span>
+        <span class="discount-value">- <?php echo $currencySymbol ?><?php echo number_format($cartDiscount / 100, 2) ?></span></div>
+    <?php endif; ?>
+    <div class="tax-total">Tax: <span class="tax-value">
+        <?php echo $currencySymbol ?><?php
         $totalTax = $totalVatable * $tax;
         echo number_format($totalTax / 100, 2)
         ?>
+        </span>
     </div>
-    <div class="cart-total">Total: <?php echo $currencySymbol ?> <?php echo number_format(($cartTotal + $totalTax) / 100, 2) ?></div>
+    <div class="cart-total">Total: <span class="cart-total-value"><?php echo $currencySymbol ?><?php echo number_format(($cartTotal + $totalTax) / 100, 2) ?></span></div>
 </div>
 </body>
 </html>
