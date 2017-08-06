@@ -1,5 +1,7 @@
 <?php
 
+use App\Acme\TaxCalculator;
+
 include __DIR__ . '/../app/vendor/autoload.php';
 $foo = new App\Acme\Foo();
 
@@ -16,19 +18,15 @@ try {
     }
 
     $cart = $cartRepository->findByCustomerId($customerId);
-    $cartTotal = 0;
-    $totalVatable = 0;
+    $taxCalculator = new TaxCalculator($customer['country'], $cart->getCartItems());
     switch ($customer['currency']) {
         case 'GBP':
-            $tax = 0.2;
             $currencySymbol = '£';
             break;
         case 'EUR':
-            $tax = 0.2;
             $currencySymbol = '€';
             break;
         default:
-            $tax = 0.4;
             $currencySymbol = '$';
             break;
     }
@@ -98,9 +96,8 @@ try {
             </div>
         </div>
     <?php endforeach; ?>
-    <?php if ($cartTotal > 10000):
-        $cartDiscount = $cartTotal * 0.2;
-        $cartTotal -= $cartDiscount;
+    <?php if ($cart->getTotalCost() > 10000):
+        $cartDiscount = $cart->getTotalCost() * 0.2;
     ?>
     <div class="discount">
         <span class="discount-text">Discount: 20% off £100 spend</span>
@@ -108,12 +105,11 @@ try {
     <?php endif; ?>
     <div class="tax-total">Tax: <span class="tax-value">
         <?php echo $currencySymbol ?><?php
-        $totalTax = $totalVatable * $tax;
-        echo number_format($totalTax / 100, 2)
+        echo number_format($taxCalculator->getTotalTax() / 100, 2)
         ?>
         </span>
     </div>
-    <div class="cart-total">Total: <span class="cart-total-value"><?php echo $currencySymbol ?><?php echo number_format(($cartTotal + $totalTax) / 100, 2) ?></span></div>
+    <div class="cart-total">Total: <span class="cart-total-value"><?php echo $currencySymbol ?><?php echo number_format(($cart->getTotalCost() - $cartDiscount + $taxCalculator->getTotalTax()) / 100, 2) ?></span></div>
 </div>
 </body>
 </html>

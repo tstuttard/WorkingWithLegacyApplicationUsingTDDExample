@@ -25,6 +25,11 @@ class Cart
      */
     private $items;
 
+    /**
+     * @var int
+     */
+    private $totalCost;
+
     public function __construct(int $id, int $customerId)
     {
         $this->id = $id;
@@ -58,6 +63,12 @@ class Cart
 
     public function addCartItem(CartItem $cartItem)
     {
+        $this->totalCost += $cartItem->getCost() * $cartItem->getQuantity();
         $this->items[] = $cartItem;
+    }
+
+    public function getTotalCost(): int
+    {
+        return $this->totalCost;
     }
 }

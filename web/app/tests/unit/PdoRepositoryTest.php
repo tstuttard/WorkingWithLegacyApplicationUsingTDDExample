@@ -51,5 +51,6 @@ class PdoRepositoryTest extends \Codeception\Test\Unit
 
         $this->assertEquals($customerId, $cart->getCustomerId());
         $this->assertEquals($expectedCartItems, $cart->getCartItems());
+        $this->assertEquals(2794, $cart->getTotalCost());
     }
 }
