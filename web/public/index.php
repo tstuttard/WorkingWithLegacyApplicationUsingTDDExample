@@ -1,6 +1,6 @@
 <?php
 
-use App\Acme\TaxCalculator;
+use App\Acme\PdoCartRepository;use App\Acme\PdoCustomerRepository;use App\Acme\TaxCalculator;
 
 include __DIR__ . '/../app/vendor/autoload.php';
 $foo = new App\Acme\Foo();
@@ -9,27 +9,12 @@ try {
     $dsn = 'mysql:host=mysql;dbname=test;charset=utf8;port=3306';
     $pdo = new PDO($dsn, 'dev', 'dev');
     $customerId = 1;
-    $cartRepository = new \App\Acme\PdoCartRepository($pdo);
+    $cartRepository = new PdoCartRepository($pdo);
+    $customerRepository = new PdoCustomerRepository($pdo);
 
-    $customerQuery = $pdo->prepare('select * from customers where id = :id');
-    $customerQuery->bindParam(':id', $customerId);
-    if ($customerQuery->execute()) {
-        $customer = $customerQuery->fetch();
-    }
+    $customer = $customerRepository->findById($customerId);
 
-    $cart = $cartRepository->findByCustomerId($customerId);
-    $taxCalculator = new TaxCalculator($customer['country'], $cart->getCartItems());
-    switch ($customer['currency']) {
-        case 'GBP':
-            $currencySymbol = '£';
-            break;
-        case 'EUR':
-            $currencySymbol = '€';
-            break;
-        default:
-            $currencySymbol = '$';
-            break;
-    }
+    $cart = $cartRepository->findByCustomer($customer);
 
 } catch (PDOException $e) {
     echo $e->getMessage();
@@ -92,24 +77,24 @@ try {
                 <?php echo $cartItem->getItemName() ?> x <?php echo $cartItem->getQuantity() ?>
             </div>
             <div class="cart-item-price">
-                <?php echo $currencySymbol ?><?php echo number_format($cartItem->getQuantity() * $cartItem->getCost() / 100, 2) ?>
+                <?php echo $cart->getCurrencySymbol() ?><?php echo $cartItem->getFormattedTotalCost() ?>
             </div>
         </div>
     <?php endforeach; ?>
-    <?php if ($cart->getTotalCost() > 10000):
-        $cartDiscount = $cart->getTotalCost() * 0.2;
+    <?php if ($cart->getTotalCostWithoutTax() > 10000):
+        $cartDiscount = $cart->getTotalCostWithoutTax() * 0.2;
     ?>
     <div class="discount">
         <span class="discount-text">Discount: 20% off £100 spend</span>
-        <span class="discount-value">- <?php echo $currencySymbol ?><?php echo number_format($cartDiscount / 100, 2) ?></span></div>
+        <span class="discount-value">- <?php echo $cart->getCurrencySymbol() ?><?php echo number_format($cartDiscount / 100, 2) ?></span></div>
     <?php endif; ?>
     <div class="tax-total">Tax: <span class="tax-value">
-        <?php echo $currencySymbol ?><?php
-        echo number_format($taxCalculator->getTotalTax() / 100, 2)
+        <?php echo $cart->getCurrencySymbol() ?><?php
+        echo $cart->getFormattedTotalTax()
         ?>
         </span>
     </div>
-    <div class="cart-total">Total: <span class="cart-total-value"><?php echo $currencySymbol ?><?php echo number_format(($cart->getTotalCost() - $cartDiscount + $taxCalculator->getTotalTax()) / 100, 2) ?></span></div>
+    <div class="cart-total">Total: <span class="cart-total-value"><?php echo $cart->getCurrencySymbol() ?><?php echo number_format(($cart->getTotalCostWithTax() - $cartDiscount) / 100, 2) ?></span></div>
 </div>
 </body>
 </html>

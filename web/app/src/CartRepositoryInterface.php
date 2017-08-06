@@ -4,5 +4,7 @@ namespace App\Acme;
 
 interface CartRepositoryInterface
 {
-    public function findByCustomerId(int $customerId) : Cart;
+    public function findByCustomer(Customer $customer) : Cart;
+
+    public function addCartItem(int $cartId, CartItem $cartItem);
 }

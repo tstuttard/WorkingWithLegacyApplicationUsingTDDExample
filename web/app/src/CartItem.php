@@ -5,7 +5,7 @@ namespace App\Acme;
 class CartItem
 {
     /**
-     * @var int
+     * @var int|null
      */
     private $id;
     /**
@@ -27,7 +27,7 @@ class CartItem
     private $isVatable;
 
 
-    public function __construct(int $id, string $itemName, int $cost, int $quantity, bool $isVatable)
+    public function __construct(?int $id, string $itemName, int $cost, int $quantity, bool $isVatable)
     {
         $this->id = $id;
         $this->itemName = $itemName;
@@ -39,6 +39,11 @@ class CartItem
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
     }
 
     public function getItemName(): string
@@ -63,5 +68,10 @@ class CartItem
     public function isVatable(): bool
     {
         return $this->isVatable;
+    }
+
+    public function getFormattedTotalCost(): string
+    {
+        return number_format($this->getCost() * $this->getQuantity() / 100, 2);
     }
 }

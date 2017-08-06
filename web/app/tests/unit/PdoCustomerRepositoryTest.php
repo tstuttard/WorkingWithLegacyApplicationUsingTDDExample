@@ -2,9 +2,11 @@
 
 
 use App\Acme\CartItem;
+use App\Acme\Customer;
 use App\Acme\PdoCartRepository;
+use App\Acme\PdoCustomerRepository;
 
-class PdoRepositoryTest extends \Codeception\Test\Unit
+class PdoCustomerRepositoryTest extends \Codeception\Test\Unit
 {
     /**
      * @var \UnitTester
@@ -35,22 +37,17 @@ class PdoRepositoryTest extends \Codeception\Test\Unit
         $this->pdo->rollBack();
     }
 
-    public function testFindByCustomerIdReturnsCartWithCartItems()
+    public function testFindById()
     {
-        $cartRepository = new PdoCartRepository($this->pdo);
+        $customerRepository = new PdoCustomerRepository($this->pdo);
 
         $customerId = 1;
 
-        $expectedCartItems = [
-            new CartItem(1, 'Sausages', 499, 2, false),
-            new CartItem(2, 'Eggs', 233, 6, false),
-            new CartItem(3, 'Chips', 199, 2, false),
-        ];
+        $customer = $customerRepository->findByid(1);
 
-        $cart = $cartRepository->findByCustomerId($customerId);
-
-        $this->assertEquals($customerId, $cart->getCustomerId());
-        $this->assertEquals($expectedCartItems, $cart->getCartItems());
-        $this->assertEquals(2794, $cart->getTotalCost());
+        $this->assertEquals($customerId, $customer->getId());
+        $this->assertEquals('Tom Stuttard', $customer->getName());
+        $this->assertEquals('GBR', $customer->getCountryCode());
+        $this->assertEquals('GBP', $customer->getCurrencyCode());
     }
 }
