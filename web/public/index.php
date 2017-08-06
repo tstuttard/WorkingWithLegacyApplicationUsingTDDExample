@@ -7,21 +7,15 @@ try {
     $dsn = 'mysql:host=mysql;dbname=test;charset=utf8;port=3306';
     $pdo = new PDO($dsn, 'dev', 'dev');
     $customerId = 1;
+    $cartRepository = new \App\Acme\PdoCartRepository($pdo);
+
     $customerQuery = $pdo->prepare('select * from customers where id = :id');
     $customerQuery->bindParam(':id', $customerId);
     if ($customerQuery->execute()) {
         $customer = $customerQuery->fetch();
     }
 
-    $cartQuery = $pdo->prepare('select *, cart_items.id as cart_item_id
-from carts
-left join cart_items on carts.id = cart_items.cart_id
-where customer_id = :customer_id');
-    $cartQuery->bindParam(':customer_id', $customerId);
-
-    if ($cartQuery->execute()) {
-        $cart = $cartQuery->fetchAll();
-    }
+    $cart = $cartRepository->findByCustomerId($customerId);
     $cartTotal = 0;
     $totalVatable = 0;
     switch ($customer['currency']) {
@@ -89,18 +83,18 @@ where customer_id = :customer_id');
 <h1>Legacy Online Shop</h1>
 
 <div class="cart">
-    <?php foreach ($cart as $cartItem):
-        $cartTotal += $cartItem['item_cost'] * $cartItem['item_quantity'];
-        if ($cartItem['isVatable']) {
-            $totalVatable += $cartItem['item_cost'] * $cartItem['item_quantity'];
+    <?php foreach ($cart->getCartItems() as $cartItem):
+        $cartTotal += $cartItem->getCost() * $cartItem->getQuantity();
+        if ($cartItem->isVatable()) {
+            $totalVatable += $cartItem->getCost() * $cartItem->getQuantity();
         }
         ?>
-        <div class="cart-item" id="cart-item-<?php echo $cartItem['cart_item_id'] ?>">
+        <div class="cart-item" id="cart-item-<?php echo $cartItem->getId() ?>">
             <div class="cart-item-list">
-                <?php echo $cartItem['item_name'] ?> x <?php echo $cartItem['item_quantity'] ?>
+                <?php echo $cartItem->getItemName() ?> x <?php echo $cartItem->getQuantity() ?>
             </div>
             <div class="cart-item-price">
-                <?php echo $currencySymbol ?><?php echo number_format($cartItem['item_quantity'] * $cartItem['item_cost'] / 100, 2) ?>
+                <?php echo $currencySymbol ?><?php echo number_format($cartItem->getQuantity() * $cartItem->getCost() / 100, 2) ?>
             </div>
         </div>
     <?php endforeach; ?>

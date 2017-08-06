@@ -42,6 +42,10 @@ code-sniff:
 	@echo "Checking the standard code..."
 	@docker exec $(shell docker-compose ps -q php) app/vendor/bin/phpcs --standard=PSR2 app/src
 
+code-beautify:
+	@echo "Checking the standard code..."
+	@docker exec $(shell docker-compose ps -q php) app/vendor/bin/phpcbf --standard=PSR2 --no-patch app/src
+
 composer-up:
 	@docker run --rm -v $(shell pwd)/web/app:/app composer/composer update
 
@@ -70,6 +74,9 @@ mysql-restore:
 	@docker exec -i $(shell docker-compose ps -q mysqldb) mysql -u"$(MYSQL_ROOT_USER)" -p"$(MYSQL_ROOT_PASSWORD)" test < $(MYSQL_DUMPS_DIR)/db.sql
 
 test: code-sniff
+	@make resetOwner
+	web/app/vendor/bin/codecept run unit -c web/app/codeception.yml
+	@make resetOwner
 	web/app/vendor/bin/codecept run acceptance -c web/app/codeception.yml
 resetOwner:
 	@$(shell chown -Rf $(SUDO_USER):$(shell id -g -n $(SUDO_USER)) $(MYSQL_DUMPS_DIR) "$(shell pwd)/etc/ssl" "$(shell pwd)/web/app" 2> /dev/null)
