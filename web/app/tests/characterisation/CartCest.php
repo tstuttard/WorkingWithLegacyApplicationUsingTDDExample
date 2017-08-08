@@ -2,13 +2,13 @@
 
 class CartCest
 {
-    public function _before(AcceptanceTester $I)
+    public function _before(CharacterisationTester $I)
     {
         $I->refreshDatabase();
 
     }
 
-    public function cartInGBP(AcceptanceTester $I)
+    public function cartInGBP(CharacterisationTester $I)
     {
         $I->amOnPage('/');
         $I->see('Legacy Online Shop');
@@ -23,7 +23,7 @@ class CartCest
         $I->see('Total: £27.94');
     }
 
-    public function cartInEUR(AcceptanceTester $I)
+    public function cartInEUR(CharacterisationTester $I)
     {
         $I->changeCustomerCurrency(1, 'EUR');
 
@@ -41,7 +41,7 @@ class CartCest
         $I->see('Total: €27.94');
     }
 
-    public function cartWithVatableItems(AcceptanceTester $I)
+    public function cartWithVatableItems(CharacterisationTester $I)
     {
         $cartItem = [
             'id' => 4,
@@ -71,7 +71,7 @@ class CartCest
 
     }
 
-    public function cartWithDiscount(AcceptanceTester $I)
+    public function cartWithDiscount(CharacterisationTester $I)
     {
         $cartItem = [
             'id' => 4,
