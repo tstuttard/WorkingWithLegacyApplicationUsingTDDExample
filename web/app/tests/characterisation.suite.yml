@@ -1,0 +1,6 @@
+actor: CharacterisationTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: http://0.0.0.0:8000
+        - \Helper\Characterisation
