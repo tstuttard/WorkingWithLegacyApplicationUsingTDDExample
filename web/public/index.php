@@ -48,6 +48,42 @@ where customer_id = :customer_id');
 <head>
     <meta charset="utf-8">
     <title>Docker <?php echo $foo->getName(); ?></title>
+    <style>
+        body {
+            font-size: 28px;
+        }
+
+        .cart {
+            width: 500px;
+            border: black 1px solid;
+            padding: 5px;
+        }
+
+        .cart-item {
+            /*margin-bottom: 10px;*/
+        }
+
+        .cart-item-list {
+            display: inline;
+        }
+
+        .cart-item-price {
+            display: inline;
+            float: right;
+        }
+
+        .discount-value {
+            float: right;
+        }
+
+        .tax-value {
+            float: right;
+        }
+
+        .cart-total-value {
+            float: right;
+        }
+    </style>
 </head>
 <body>
 <h1>Legacy Online Shop</h1>
