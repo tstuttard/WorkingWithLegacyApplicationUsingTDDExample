@@ -39,7 +39,7 @@ CREATE TABLE `cart_items` (
 
 LOCK TABLES `cart_items` WRITE;
 /*!40000 ALTER TABLE `cart_items` DISABLE KEYS */;
-INSERT INTO `cart_items` VALUES (1,1,'Sausages',499,2,0),(2,1,'Eggs',233,6,0),(3,1,'Chips',199,2,0),(4,1,'Shoes',1999,1,1);
+INSERT INTO `cart_items` VALUES (1,1,'Sausages',499,2,0),(2,1,'Eggs',233,6,0),(3,1,'Chips',199,2,0);
 /*!40000 ALTER TABLE `cart_items` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -37,58 +37,7 @@ class AcceptanceTester extends \Codeception\Actor
     {
 
 
-        $delete = $this->pdo->exec('DELETE FROM `customers`; DELETE FROM `carts`; DELETE FROM `cart_items`;');
-
-        $customerInsert = $this->pdo->prepare('INSERT INTO `customers` (`id`, `name`, `currency`, `country`) VALUES (:id, :customerName, :currencyCode, :countryCode)');
-        $customerInsert->bindValue(':id', 1);
-        $customerInsert->bindValue(':customerName', 'Tom Stuttard');
-        $customerInsert->bindValue(':currencyCode', 'GBP');
-        $customerInsert->bindValue(':countryCode', 'GBR');
-        $customerInsert->execute();
-
-        $cartInsert = $this->pdo->prepare('INSERT INTO `carts` VALUES (:id, :customerId)');
-        $cartInsert->bindValue(':id', 1);
-        $cartInsert->bindValue(':customerId', 1);
-        $cartInsert->execute();
-
-        $cartItems = [
-            [
-                'id' => 1,
-                'cartId' => 1,
-                'name' => 'Sausages',
-                'cost' => 499,
-                'quantity' => 2,
-                'isVatable' => 0,
-            ],
-            [
-                'id' => 2,
-                'cartId' => 1,
-                'name' => 'Eggs',
-                'cost' => 233,
-                'quantity' => 6,
-                'isVatable' => 0,
-            ],
-            [
-                'id' => 3,
-                'cartId' => 1,
-                'name' => 'Chips',
-                'cost' => 199,
-                'quantity' => 2,
-                'isVatable' => 0,
-            ],
-        ];
-        foreach ($cartItems as $cartItem) {
-            $cartItemsInsert = $this->pdo->prepare('INSERT INTO `cart_items` VALUES (:id, :cartId, :name, :cost, :quantity, :isVatable)');
-            $cartItemsInsert->bindValue(':id', $cartItem['id']);
-            $cartItemsInsert->bindValue(':cartId', $cartItem['cartId']);
-            $cartItemsInsert->bindValue(':name', $cartItem['name']);
-            $cartItemsInsert->bindValue(':cost', $cartItem['cost']);
-            $cartItemsInsert->bindValue(':quantity', $cartItem['quantity']);
-            $cartItemsInsert->bindValue(':isVatable', $cartItem['isVatable']);
-            $cartItemsInsert->execute();
-        }
-
-        $query = $this->pdo->query('select id, cart_id, item_name, item_quantity, isVatable from cart_items');
+        $this->pdo->exec(file_get_contents(__DIR__ . '/../../../../data/db/dumps/db.sql'));
     }
 
    /**

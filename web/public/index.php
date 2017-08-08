@@ -76,8 +76,8 @@ where customer_id = :customer_id');
     ?>
     <div class="discount">
         <span class="discount-text">Discount: 20% off £100 spend</span>
-        <span class="discount-value">- <?php echo $currencySymbol ?>
-            <?php echo number_format($cartDiscount / 100, 2) ?></span></div>
+        <span class="discount-value">- <?php echo $currencySymbol ?><?php echo
+            number_format($cartDiscount / 100, 2) ?></span></div>
     <?php endif; ?>
     <div class="tax-total">Tax: <span class="tax-value">
         <?php echo $currencySymbol ?><?php
